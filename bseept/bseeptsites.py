@@ -533,8 +533,55 @@ def updatesitescopev2(APIURL, APIKEY, site_id, inscopeprefix, outscopeprefix, pr
         print(json.dumps(result))
     if (output is True):
         return result
+        
+        
+        
+#
+# Update site scope URLs using the v2 mutation for BlueSage
+#
+def updatesitescopev2simple(APIURL, APIKEY, site_id, inscopeprefix, protocoloptions, starturls, doprint=True, output=False):
 
+    query = '''
+    mutation UpdateSiteScopev2($siteid: ID!, $inscopeprefix: [String!]!, $protocolops: ScopeProtocolOptions!, $starturls: [String!]!){
 
+        update_site_scope_v2(
+            input: {
+                site_id : $siteid 
+                scope_v2: {
+                    in_scope_url_prefixes: $inscopeprefix
+                    protocol_options: $protocolops
+                    start_urls: $starturls
+                }
+            } 
+        ) 
+
+        {
+            site{
+                id
+                name
+                scope_v2 {
+                    in_scope_url_prefixes
+                    protocol_options
+                    start_urls
+                }
+            }
+
+        }
+    }'''
+
+    variables = {
+        "siteid": site_id,
+        "inscopeprefix": inscopeprefix,
+        "protocolops": protocoloptions,
+        "starturls": starturls
+    }
+
+    result = bseeptgraphql.dographql(APIURL, APIKEY, query, variables)
+
+    if (doprint is True):
+        print(json.dumps(result))
+    if (output is True):
+        return result
 
 
 
